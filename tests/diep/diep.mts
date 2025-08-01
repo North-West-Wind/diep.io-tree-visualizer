@@ -1,5 +1,5 @@
 import { Triep, Tree } from "../../src/triep";
-import { createReadStream, existsSync, mkdirSync, statSync, writeFileSync } from "fs";
+import { createReadStream, existsSync, statSync, writeFileSync } from "fs";
 import { Canvas, Image, loadImage } from "skia-canvas";
 import unzip from "unzip-stream";
 

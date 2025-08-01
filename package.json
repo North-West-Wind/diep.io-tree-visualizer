@@ -1,13 +1,13 @@
 {
   "name": "diep.io-tree-visualizer",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "main": "dist/triep.js",
   "types": "dist/triep.d.ts",
   "files": [
     "dist/**/*"
   ],
   "scripts": {
-    "test": "tsx tests/simple.mts && tsx tests/diep/diep.mts",
+    "test": "tsx tests/simple.mts && tsx tests/diep/diep.mts && tsx tests/japanese/jp.mts",
 		"build": "tsc"
   },
   "keywords": ["diep.io", "tree", "visualization", "canvas"],

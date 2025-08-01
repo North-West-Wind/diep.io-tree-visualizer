@@ -89,18 +89,25 @@ export class Triep {
 	 * @param ctx A CanvasRenderingContext2D obtainable from canvas.getContext("2d")
 	 * @param x The x-center of the tree circle
 	 * @param y The y-center of the tree circle
-	 * @param radius The LAYER radius (i.e. how thick each layer will be)
+	 * @param radius The LAYER radius (i.e. how thick each layer will be). This can be an array, with elements indicating the thickness of each layer
 	 * @param stroke Stroke width between layers
 	 */
-	render(ctx: CanvasRenderingContext2D, x: number, y: number, radius: number, stroke: number, angle = 0) {
+	render(ctx: CanvasRenderingContext2D, x: number, y: number, radius: number | number[], stroke: number, angle = 0) {
 		let depth = this.root.depth;
+		if (typeof radius == "number")
+			radius = Array(depth).fill(radius);
+		else if (radius.length < depth) {
+			if (!radius.length) throw new Error("The radius array must have at least 1 element");
+			radius.push(...Array(depth - radius.length).fill(radius[radius.length - 1]));
+		}
 		// draw background (stroke) circle
 		const fillStyle: string | CanvasGradient | CanvasPattern = ctx.fillStyle;
 		if (this.root.color) ctx.fillStyle = this.root.color;
 		else ctx.fillStyle = "#5b6366";
 		ctx.beginPath();
-		ctx.arc(x, y, (radius + stroke) * depth, 0, Math.PI * 2, false);
-		ctx.arc(x, y, radius, 0, Math.PI * 2, true);
+		const outerRadius = radius.slice(0, depth).reduce((a, b) => a + b);
+		ctx.arc(x, y, outerRadius + stroke * depth, 0, Math.PI * 2, false);
+		ctx.arc(x, y, radius[0], 0, Math.PI * 2, true);
 		ctx.fill();
 		ctx.fillStyle = fillStyle;
 
@@ -120,10 +127,12 @@ export class Triep {
 				const angleSize = child.leaves * Math.PI * 2 / maxLeaves;
 				if (!child.skip) {
 					ctx.beginPath();
-					const offsetA = this.strokeAngleOffset((radius + stroke) * (maxDepth - depth + 1) - stroke, stroke);
-					ctx.arc(x, y, (radius + stroke) * (maxDepth - depth + 1) - stroke, startAngle + offsetA, (startAngle + angleSize) - offsetA);
-					const offsetB = this.strokeAngleOffset((radius + stroke) * (maxDepth - depth), stroke);
-					ctx.arc(x, y, (radius + stroke) * (maxDepth - depth), (startAngle + angleSize) - offsetB, startAngle + offsetB, true);
+					const outerRadius = radius.slice(0, maxDepth - depth + 1).reduce((a, b) => a + b) + stroke * (maxDepth - depth);
+					const offsetA = this.strokeAngleOffset(outerRadius, stroke);
+					ctx.arc(x, y, outerRadius, startAngle + offsetA, (startAngle + angleSize) - offsetA);
+					const innerRadius = radius.slice(0, maxDepth - depth).reduce((a, b) => a + b) + stroke * (maxDepth - depth);
+					const offsetB = this.strokeAngleOffset(innerRadius, stroke);
+					ctx.arc(x, y, innerRadius, (startAngle + angleSize) - offsetB, startAngle + offsetB, true);
 					const fillStyle: string | CanvasGradient | CanvasPattern = ctx.fillStyle;
 					ctx.fillStyle = child.color || `#${Math.floor(Math.random() * 16777216).toString(16).padStart(6, "0")}`;
 					ctx.fill();
@@ -131,7 +140,7 @@ export class Triep {
 					ctx.fillStyle = fillStyle;
 					ctx.translate(x, y);
 					ctx.rotate(startAngle + angleSize * 0.5 - Math.PI * 0.5);
-					ctx.translate(0, (radius + stroke) * (maxDepth - depth + 0.5) - stroke);
+					ctx.translate(0, innerRadius + (outerRadius - innerRadius) * 0.5);
 					if (child.downwards) ctx.rotate(-startAngle - angleSize * 0.5 + Math.PI * 0.5)
 					this.renderTree(ctx, child);
 					ctx.resetTransform();

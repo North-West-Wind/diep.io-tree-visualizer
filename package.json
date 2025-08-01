@@ -1,8 +1,8 @@
 {
   "name": "diep.io-tree-visualizer",
   "version": "1.0.0",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/triep.js",
+  "types": "dist/triep.d.ts",
   "files": [
     "dist/**/*"
   ],

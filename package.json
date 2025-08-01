@@ -1,0 +1,25 @@
+{
+  "name": "diep.io-tree-visualizer",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*"
+  ],
+  "scripts": {
+    "test": "tsx tests/simple.mts && tsx tests/diep/diep.mts",
+		"build": "tsc"
+  },
+  "keywords": ["diep.io", "tree", "visualization", "canvas"],
+  "author": "NorthWestWind",
+  "license": "GPL-3.0-or-later",
+  "description": "Visualize trees in the style of diep.io's evolution tree.",
+  "devDependencies": {
+    "@types/node": "^20.17.19",
+    "@types/unzip-stream": "^0.3.4",
+    "skia-canvas": "^2.0.2",
+    "tsx": "^4.20.3",
+    "typescript": "^5.7.3",
+    "unzip-stream": "^0.3.4"
+  }
+}
